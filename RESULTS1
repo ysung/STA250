@@ -1,0 +1,67 @@
+
+1. The method
+Use the shell to computate the entire frequency table of counts of unique delay values.
+
+2. The actual mean, SD, median of the Arrival time;
+mean = 7.220496
+median = 2
+SD = 27.37275
+
+3. What files were processed
+Delays1987_2013.tar.bz2
+
+4. The command(s) to run the code;
+shell:
+gunzip -c Delays1987_2013.tar.bz2 | cut -f 15 -d, | sort | uniq -c > FreqTable.txt
+
+R:
+Delay = function(path){
+  data = read.table(path)
+  data = data[-c(nrow(data), nrow(data)-1),]
+  # delete the NA row and the row with the characters "ArrivalDelay"
+  data[,2] = as.numeric(as.character(data[,2]))
+  data = data[order(data[,2]),]
+  Delay_median = function(data)
+  {
+    x = 0; y = 1
+    while(x < sum(data[,1])/2) {
+      x = x + data[y,1]
+      y = y + 1
+    }
+    if (x == sum(data[,1])/2)
+      return ((data[y,2]+data[y+1,2])/2)
+    else
+      return (data[y,2])
+  }
+  
+  sum(data[,1])
+  # number of observations = 68535532
+  mu = sum(data[,1]*data[,2])/sum(data[,1])
+  # mean = 7.220496
+  med = Delay_median(data)
+  # median = 2
+  std = sqrt(sum(data[,1]*(data[,2] - mu)^2) / sum(data[,1]))
+  # 27.37275
+  result = list(time = time, results = c(mean = mu, median = med, sd = std),
+       system = Sys.info(),  session = sessionInfo())
+  return (result)
+}
+
+Delay("./data/FreqTable.txt")
+
+
+
+5. The time it took to complete the entire computation
+
+Amount of RAM: 16GB 1600Mhz DDR3
+CPU speed: 2GHz Intel Core i7
+Number of Processors: 1
+Total Number of Cores: 4
+L2 Cache (per Core): 256 KB
+L3 Cache: 6 MB
+Version of R: 3.0.2 (2013-09-25)
+Platform: x86_64-apple-darwin10.8.0 (64-bit)
+OS: OSX Version 10.9.1
+
+   user  system elapsed 
+  0.018   0.001   0.018 
